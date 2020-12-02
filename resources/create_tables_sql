@@ -1,0 +1,57 @@
+CREATE TABLE bust_out (
+id SERIAL PRIMARY KEY,
+recipe_id int,
+item_id int,
+qty int,
+unit varchar(25)
+);
+
+CREATE TABLE bust_out_list (
+id SERIAL PRIMARY KEY,
+item varchar(100)
+);
+
+CREATE TABLE ingredients (
+id SERIAL PRIMARY KEY,
+recipe_id int,
+ingredient_id int,
+qty int,
+unit varchar(25),
+servings int
+);
+
+CREATE TABLE ingredients_list (
+id SERIAL PRIMARY KEY,
+ingredient varchar(100),
+category varchar(100),
+subcategory varchar(100),
+staple bit
+);
+
+CREATE TABLE recipe_list (
+id SERIAL PRIMARY KEY,
+name varchar(255),
+description varchar(4000),
+category varchar(100),
+subcategory varchar(100),
+prep_time int,
+total_time int,
+calories int,
+hf_id varchar(25),
+tip varchar(4000),
+image_url varchar(255)
+);
+
+CREATE TABLE steps (
+id SERIAL PRIMARY KEY,
+recipe_id int,
+step int,
+title varchar(50),
+description varchar(4000)
+);
+
+CREATE TABLE steps_images (
+id SERIAL PRIMARY KEY,
+step_id int,
+image_url varchar(255)
+);

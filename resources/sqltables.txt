@@ -1,0 +1,63 @@
+-- Exported from QuickDBD: https://www.quickdatabasediagrams.com/
+-- NOTE! If you have used non-SQL datatypes in your design, you will have to change these here.
+
+
+CREATE TABLE "recipe_list" (
+    "id" SERIAL PRIMARY KEY,
+    "recipe" varchar(255)   NULL,
+    "description" varchar(4000)   NULL,
+    "category" varchar(255)   NULL,
+    "subcategory" varchar(255)   NULL,
+    "prep_time" int   NULL,
+    "total_time" int   NULL,
+    "calories" int   NULL,
+    "hellofresh_id" varchar(255)   NULL,
+    "tip" varchar(4000)   NULL,
+    "rating" int   NULL,
+    "notes" varchar(4000)   NULL,
+    "image_path" varchar(255)   NULL,
+    "image_id" varchar(255)   NULL,
+    "image_name" varchar(255)   NULL
+);
+
+CREATE TABLE "bust_out" (
+    "id" SERIAL PRIMARY KEY,
+    "recipe_id" int   NULL,
+    "item" varchar(255)   NULL,
+    "qty" int   NULL,
+    "unit" varchar(255)   NULL
+);
+
+CREATE TABLE "ingredients" (
+    "id" SERIAL PRIMARY KEY,
+    "recipe_id" int   NULL,
+    "ingredient" varchar(255)   NULL,
+    "qty" int   NULL,
+    "unit" varchar(255)   NULL,
+    "servings" int   NULL,
+    "category" varchar(255)   NULL,
+    "subcategory" varchar(255)   NULL,
+    "staple" bit   NULL
+);
+
+CREATE TABLE "steps" (
+    "id" SERIAL PRIMARY KEY,
+    "recipe_id" int   NULL,
+    "step_no" int   NULL,
+    "step_description" varchar(4000)   NULL
+);
+
+CREATE TABLE "steps_images" (
+    "id" SERIAL PRIMARY KEY,
+    "step_id" int   NULL,
+    "image_path" varchar(255)   NULL,
+    "image_id" varchar(255)   NULL,
+    "image_name" varchar(255)   NULL
+);
+
+CREATE TABLE "substitutions" (
+    "id" SERIAL PRIMARY KEY,
+    "ingredient_id" int   NULL,
+    "substitution" varchar(255)   NULL,
+    "ratio" varchar(255)   NULL
+);
