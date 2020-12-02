@@ -16,9 +16,9 @@ def index():
     return render_template("index.html", site_data=site_data)
 
 
-@app.route("/recipes")
-def trails():
-    recipe_data = getdata.recipes()
+@app.route("/recipes/<recipe_id>")
+def recipes(recipe_id):
+    recipe_data = getdata.recipes(recipe_id)
     return jsonify(recipe_data)
 
 @app.route("/ingredients")
