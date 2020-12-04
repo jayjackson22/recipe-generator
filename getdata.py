@@ -12,7 +12,9 @@ connection = engine.connect()
 metadata = db.MetaData()
 
 def recipes(recipe_id):
-    # Recipes
+    ###########
+    # Recipes #
+    ###########
     table = db.Table('recipe_list', metadata, autoload = True, autoload_with = engine)
     query = db.select(
         [
@@ -35,112 +37,186 @@ def recipes(recipe_id):
                 'calories': ea[7],
                 'hf_id': ea[8],
                 'tip': ea[9],
-                'image_url': ea[10]
+                'image_url': ea[10],
+                'servings': ea[11]
             }
         )
     
-    # Ingredients
+    ###############
+    # Ingredients #
+    ###############
     table = db.Table('ingredients', metadata, autoload = True, autoload_with = engine)
-    query = db.select(
-        [
-            table
-        ]
-    ).where(table.columns.recipe_id == recipe_id)
+    try:
+        query = db.select(
+            [
+                table
+            ]
+        ).where(table.columns.recipe_id == recipe_id)
 
-    result = connection.execute(query).fetchall()
-    ingredients_response = []
-    for ea in result:
-        ingredients_response.append(
-            {
-                "id": ea[0],
-                "recipe_id": ea[1],
-                'ingredient_id': ea[2],
-                'qty': ea[3],
-                'unit': ea[4]
-            }
+        result = connection.execute(query).fetchall()
+        ingredients_response = []
+        for ea in result:
+            ingredients_response.append(
+                {
+                    "id": ea[0],
+                    "recipe_id": ea[1],
+                    'ingredient_id': ea[2],
+                    'qty': ea[3],
+                    'unit': ea[4]
+                }
+            )
+
+        # Ingredients Lookup - Entire list, not filtered
+        table = db.Table('ingredients_list', metadata, autoload = True, autoload_with = engine)
+        query = db.select(
+            [
+                table
+            ]
         )
 
-    # Ingredients Lookup - Entire list, not filtered
-    table = db.Table('ingredients_list', metadata, autoload = True, autoload_with = engine)
-    query = db.select(
-        [
-            table
-        ]
-    )
+        result = connection.execute(query).fetchall()
+        ingredients_list_response = []
+        for ea in result:
+            ingredients_list_response.append(
+                {
+                    "id": ea[0],
+                    "ingredient": ea[1],
+                    'category': ea[2],
+                    'subcategory': ea[3],
+                    'staple': ea[4]
+                }
+            )
 
-    result = connection.execute(query).fetchall()
-    ingredients_list_response = []
-    for ea in result:
-        ingredients_list_response.append(
-            {
-                "id": ea[0],
-                "ingredient": ea[1],
-                'category': ea[2],
-                'subcategory': ea[3],
-                'staple': ea[4]
-            }
-        )
-    
-    # Merge ingredients and values - DataFrames, merge, convert to json
-    ingredients_df = pd.DataFrame(ingredients_response)
-    ingredients_list_df = pd.DataFrame(ingredients_list_response)
-    ingr_df = ingredients_df.merge(ingredients_list_df, left_on='ingredient_id', right_on='id')
-    ingr_df = ingr_df[['ingredient','qty','unit','category','subcategory','staple']]
-    res = ingr_df.to_json(orient="records")
-    parsed = json.loads(res)
+        
+        # Merge ingredients and values - DataFrames, merge, convert to json
+        ingredients_df = pd.DataFrame(ingredients_response)
+        ingredients_list_df = pd.DataFrame(ingredients_list_response)
+        ingr_df = ingredients_df.merge(ingredients_list_df, left_on='ingredient_id', right_on='id', how = "left")
+        ingr_df = ingr_df[['ingredient','qty','unit','category','subcategory','staple']]
+        res = ingr_df.to_json(orient="records")
+        parsed = json.loads(res)
 
-    # Add ingredients to recipe
-    recipe_response[0]['ingredients'] = parsed
+        # Add ingredients to recipe
+        recipe_response[0]['ingredients'] = parsed
 
-    # Bust Out
+    except:
+        recipe_response[0]['ingredients'] = []
+        pass
+
+    ############
+    # Bust Out #
+    ############
     table = db.Table('bust_out', metadata, autoload = True, autoload_with = engine)
-    query = db.select(
-        [
-            table
-        ]
-    ).where(table.columns.recipe_id == recipe_id)
+    try:
+        query = db.select(
+            [
+                table
+            ]
+        ).where(table.columns.recipe_id == recipe_id)
 
-    result = connection.execute(query).fetchall()
-    bust_out_response = []
-    for ea in result:
-        bust_out_response.append(
-            {
-                "id": ea[0],
-                "recipe_id": ea[1],
-                'item_id': ea[2],
-                'qty': ea[3],
-                'unit': ea[4]
-            }
+        result = connection.execute(query).fetchall()
+        bust_out_response = []
+        for ea in result:
+            bust_out_response.append(
+                {
+                    "id": ea[0],
+                    "recipe_id": ea[1],
+                    'item_id': ea[2],
+                    'qty': ea[3],
+                    'unit': ea[4]
+                }
+            )
+
+        # Bust Out Lookup - Entire list, not filtered
+        table = db.Table('bust_out_list', metadata, autoload = True, autoload_with = engine)
+        query = db.select(
+            [
+                table
+            ]
         )
 
-    # Bust Out Lookup - Entire list, not filtered
-    table = db.Table('bust_out_list', metadata, autoload = True, autoload_with = engine)
-    query = db.select(
-        [
-            table
-        ]
-    )
+        result = connection.execute(query).fetchall()
+        bust_out_list_response = []
+        for ea in result:
+            bust_out_list_response.append(
+                {
+                    "id": ea[0],
+                    "item": ea[1]
+                }
+            )
+        
+        # Merge bust outs and values - DataFrames, merge, convert to json
+        bust_out_df = pd.DataFrame(bust_out_response)
+        bust_out_list_df = pd.DataFrame(bust_out_list_response)
+        bo_df = bust_out_df.merge(bust_out_list_df, left_on='item_id', right_on='id', how = "left")
+        bo_df = bo_df[['item','qty','unit']]
+        res = bo_df.to_json(orient="records")
+        parsed = json.loads(res)
 
-    result = connection.execute(query).fetchall()
-    bust_out_list_response = []
-    for ea in result:
-        bust_out_list_response.append(
-            {
-                "id": ea[0],
-                "item": ea[1]
-            }
-        )
+        # Add bust outs to recipe
+        recipe_response[0]['bust_out'] = parsed
     
-    # Merge bust outs and values - DataFrames, merge, convert to json
-    bust_out_df = pd.DataFrame(bust_out_response)
-    bust_out_list_df = pd.DataFrame(bust_out_list_response)
-    bo_df = bust_out_df.merge(bust_out_list_df, left_on='item_id', right_on='id')
-    bo_df = bo_df[['item','qty','unit']]
-    res = bo_df.to_json(orient="records")
-    parsed = json.loads(res)
+    except:
+        recipe_response[0]['bust_out'] = []
+        pass
 
-    # Add bust outs to recipe
-    recipe_response[0]['bust_out'] = parsed
+    #########
+    # Steps #
+    #########
+    table = db.Table('steps', metadata, autoload = True, autoload_with = engine)
+    try:
+        query = db.select(
+            [
+                table
+            ]
+        ).where(table.columns.recipe_id == recipe_id)
+
+        result = connection.execute(query).fetchall()
+        steps_response = []
+        for ea in result:
+            steps_response.append(
+                {
+                    "id": ea[0],
+                    "recipe_id": ea[1],
+                    'step': ea[2],
+                    'title': ea[3],
+                    'description': ea[4]
+                }
+            )
+
+        # Steps images - Entire list, not filtered
+        table = db.Table('steps_images', metadata, autoload = True, autoload_with = engine)
+        query = db.select(
+            [
+                table
+            ]
+        )
+
+        result = connection.execute(query).fetchall()
+        steps_images_response = []
+        for ea in result:
+            steps_images_response.append(
+                {
+                    "id": ea[0],
+                    "step_id": ea[1],
+                    "image_url": ea[2]
+                }
+            )
+        
+        # Add images for each step
+        for step in steps_response:
+            imgs = []
+            for image in steps_images_response:
+                if (step['id'] == image['id']):
+                    imgs.append(image['image_url'])
+            step['images'] =  imgs
+
+        # Add bust outs to recipe
+        recipe_response[0]['steps'] = steps_response
+    
+    except:
+        recipe_response[0]['steps'] = []
+        pass
 
     return recipe_response
     
@@ -167,7 +243,38 @@ def ingredients():
         )
 
     return ingredient_response
-   
+
+def recipe_list():
+    # Recipes
+    table = db.Table('recipe_list', metadata, autoload = True, autoload_with = engine)
+    query = db.select(
+        [\
+            table
+        ]
+    )
+
+    result = connection.execute(query).fetchall()
+    recipe_response = []
+    for ea in result:
+        recipe_response.append(
+            {
+                "id": ea[0],
+                "name": ea[1],
+                'description': ea[2],
+                'category': ea[3],
+                'subcategory': ea[4],
+                'prep_time': ea[5],
+                'total_time': ea[6],
+                'calories': ea[7],
+                'hf_id': ea[8],
+                'tip': ea[9],
+                'image_url': ea[10],
+                'servings': ea[11]
+            }
+        )
+    
+    return recipe_response
+
 # def routes(selectedCity="Sedona Area"):
 #     table = db.Table('routes', metadata, autoload = True, autoload_with=engine)
 #     #Query - "table.c.{column_name}" to add specific columns, "where" to filter

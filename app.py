@@ -27,9 +27,9 @@ def ingredients():
     return jsonify(ingredients_data)
 
 
-@app.route("/dispensaries/<disp_lat>/<disp_lon>")
-def dispensaries(disp_lat, disp_lon):
-    site_data = getdata.dispensaries(float(disp_lat), float(disp_lon))
+@app.route("/recipes")
+def recipes_list():
+    site_data = getdata.recipe_list()
     return jsonify(site_data)
 
 
