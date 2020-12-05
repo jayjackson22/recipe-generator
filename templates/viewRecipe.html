@@ -16,21 +16,59 @@
     <title>Get Cookin'!</title>
   </head>
   <body>
-    <nav class="navbar fixed-top navbar-light bg-light">
-      <a class="navbar-brand" href="/">Fixed top</a>
-    </nav>
-    <div class="jumbotron">
-      <h1 class="display-4">Ain't nothin I'm just tryin to get my paper, my paper</h1>
-      <p class="lead">My webpage, yo.</p>
-      <hr class="my-4">
-      <p>Here are some bullshit API's.</p>
-      <img src="https://media.tenor.com/images/1010fecf7ff0c4dc7c1826e68ec0732e/tenor.png" width="300px">
-      <p class="lead">
-          <a class="btn btn-primary btn-lg" href="/recipes/2" role="button" target="_blank">Recipes</a>
-          <a class="btn btn-primary btn-lg" href="/ingredients" role="button" target="_blank">Ingredients</a>
-      </p>
+    <div class="container">
+      <nav class="navbar fixed-top navbar-light bg-light">
+        <a class="navbar-brand" href="/">Home</a>
+        <div class = "row">
+          <div class="dropdown show">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style = "width: 400px;">
+              Recipes
+            </a>          
+            <div id = "recipe-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div class="jumbotron">
+        <div id="recipe-name"></div>
+        <hr class="my-4">
+        <div id = "recipe-description"></div>
+        <div id = "recipe-image"></div>
+      </div>
+      <div class = "row">
+        <!--Bust outs and ingredients-->
+        <div class = "col-md-3">
+          <div class = "col-md-12" style="border-style: solid; border-width: thin; border-color: rgba(0,0,0,0.125)">
+            <div>
+              <h3 style = "border-bottom-style: solid; border-width: thin;border-color: rgba(0,0,0,0.125);">Bust Out</h3>
+              <table id = "bust-out-table">
+                <tbody></tbody>
+              </table>
+            </div>
+            <!--staples-->
+            <div>
+              <h3 style = "border-bottom-style: solid; margin-top: 20px; border-width: thin; border-color: rgba(0,0,0,0.125);">Staples</h3>
+              <table id = "staples-table">
+                <tbody></tbody>
+              </table>
+            </div>
+            <!--ingredients-->
+            <div>
+              <h3 style = "border-bottom-style: solid; margin-top: 20px; border-width: thin; border-color: rgba(0,0,0,0.125);">Ingredients</h3>
+              <table id = "ingredients-table">
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!--Recipe Steps-->
+        <div class = "col-md-9">
+          <div id = "recipe-steps"></div>
+        </div>
+      </div>
     </div>
-    <div class  = "row"></div>    
+    <div class  = "row">
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- <script src="static/js/app.js"></script> -->
